@@ -1,0 +1,25 @@
+@startuml
+title Діаграма варіантів використання: Метеосервіс
+
+actor "Метеоролог" as Meteorologist
+actor "Технік" as Technician
+actor "Сервіс сповіщень" as NotifService
+
+rectangle "Метеосервіс" {
+  usecase "Обслуговувати сенсори\nта радар" as UC1
+  usecase "Публікувати прогноз" as UC2
+  usecase "Публікувати штормове\nпопередження" as UC3
+  usecase "Аналізувати точність моделі" as UC4
+  usecase "Надсилати повідомлення\nпідписникам" as UC5
+}
+
+Technician --> UC1
+Meteorologist --> UC2
+Meteorologist --> UC3
+Meteorologist --> UC4
+NotifService --> UC5
+
+UC2 ..> UC5 : <<include>>
+UC3 ..> UC5 : <<include>>
+
+@enduml
