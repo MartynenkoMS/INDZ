@@ -37,11 +37,11 @@ public class NotificationService {
      */
     public boolean send(String text) {
         if (recipients.isEmpty() && subscribers.isEmpty()) {
-            System.out.println("No recipients or subscribers for sending notification.");
+            System.out.println("Немає отримувачів або підписників для надсилання сповіщення.");
             return false;
         }
         for (String recipient : recipients) {
-            System.out.println("Sending notification: '" + text + "' to " + recipient);
+            System.out.println("Надсилання сповіщення: '" + text + "' до " + recipient);
         }
         for (Subscriber subscriber : subscribers) {
             subscriber.deliverMessage(text);

@@ -3,11 +3,15 @@
  */
 public class Main {
     public static void main(String[] args) {
-        // Creating system objects
+        // Створення об'єктів системи
         Meteorologist meteorologist = new Meteorologist(1, "Peter Johnson", "Forecaster");
         NotificationService service = new NotificationService();
+        
+        // Додавання підписників та отримувачів
+        service.addSubscriber(new Subscriber("John Smith"));
+        service.addRecipient("weather.com");
 
-        // Demonstration
+        // Демонстрація
         meteorologist.publishForecast();
         meteorologist.publishWarning();
         meteorologist.analyzeAccuracy();

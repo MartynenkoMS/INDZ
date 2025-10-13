@@ -19,25 +19,25 @@ public class Meteorologist extends WeatherSystemParticipant implements INotifica
      * Publish forecast
      */
     public void publishForecast() {
-        System.out.println("Meteorologist " + getName() + " publishes weather forecast");
+        System.out.println("Метеоролог " + getName() + " публікує прогноз погоди");
     }
 
     /**
      * Publish warning
      */
     public void publishWarning() {
-        System.out.println("Meteorologist " + getName() + " publishes warning about dangerous phenomena");
+        System.out.println("Метеоролог " + getName() + " публікує попередження про небезпечні явища");
     }
 
     /**
      * Final method for analyzing forecast accuracy
      */
     public final void analyzeAccuracy() {
-        System.out.println("Meteorologist " + getName() + " analyzes forecast accuracy");
+        System.out.println("Метеоролог " + getName() + " аналізує точність прогнозів");
     }
 
     @Override
     public String formNotification() {
-        return "Notification from meteorologist " + getName() + " (" + specialization + ")";
+        return "Сповіщення від метеоролога " + getName() + " (" + specialization + ")";
     }
 }

@@ -9,6 +9,6 @@ public class Subscriber {
     }
 
     public void deliverMessage(String text) {
-        System.out.println("Subscriber " + name + " received message: " + text);
+        System.out.println("Підписник " + name + " отримав повідомлення: " + text);
     }
 }
