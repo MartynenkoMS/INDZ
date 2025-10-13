@@ -22,4 +22,12 @@ public abstract class WeatherSystemParticipant {
     public String getName() {
         return name;
     }
+
+    /**
+     * Get participant ID
+     * @return participant identifier
+     */
+    public int getId() {
+        return id;
+    }
 }
