@@ -3,16 +3,16 @@
  */
 public class Main {
     public static void main(String[] args) {
-        // Створення об'єктів системи
-        Метеоролог метеоролог = new Метеоролог(1, "Петро Іваненко", "Синоптик");
-        СервісСповіщень сервіс = new СервісСповіщень();
+        // Creating system objects
+        Meteorologist meteorologist = new Meteorologist(1, "Peter Johnson", "Forecaster");
+        NotificationService service = new NotificationService();
 
-        // Демонстрація роботи
-        метеоролог.публікуватиПрогноз();
-        метеоролог.публікуватиПопередження();
-        метеоролог.аналізуватиТочність();
+        // Demonstration
+        meteorologist.publishForecast();
+        meteorologist.publishWarning();
+        meteorologist.analyzeAccuracy();
         
-        String сповіщення = метеоролог.сформуватиСповіщення();
-        сервіс.надіслати(сповіщення);
+        String notification = meteorologist.formNotification();
+        service.send(notification);
     }
 }
