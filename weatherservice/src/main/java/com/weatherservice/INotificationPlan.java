@@ -1,3 +1,5 @@
+package com.weatherservice;
+
 /**
  * Interface for notification formation
  */

@@ -1,0 +1,154 @@
+@startuml mvc.class
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam classBackgroundColor #E1F5FE
+skinparam classBorderColor #01579B
+skinparam arrowColor #01579B
+skinparam noteBkgColor #FFF9C4
+skinparam noteBorderColor #F57F17
+
+title MVC архітектура - UML діаграма класів
+
+package "Model (Модель)" {
+    class ServiceNotifier {
+        - subscribers: List<Subscriber>
+        - subscriberService: SubscriberService
+        
+        + addSubscriber(Subscriber): void
+        + getAllSubscribers(): List<Subscriber>
+        + send(String): boolean
+        + setSubscriberService(SubscriberService): void
+    }
+    
+    class SubscriberService {
+        - connection: Connection
+        
+        + saveSubscriber(Subscriber): void
+        + getAllSubscribers(): List<Subscriber>
+        + setConnection(Connection): void
+    }
+    
+    class Subscriber {
+        - name: String
+        
+        + Subscriber(String)
+        + getName(): String
+        + deliverMessage(String): void
+    }
+    
+    ServiceNotifier "1" *-- "0..*" Subscriber : contains
+    ServiceNotifier "1" --> "1" SubscriberService : uses
+}
+
+package "View (Вигляд)" {
+    class WeatherWebView {
+        - controller: WeatherController
+        - server: WebServer
+        
+        + WeatherWebView(WeatherController, WebServer)
+        + start(int): void
+        + stop(): void
+        - setupRoutes(): void
+        - getAllSubscribers(HttpContext): void
+        - getStatus(HttpContext): void
+    }
+    
+    interface HttpContext {
+        + header(String, String): void
+        + json(Object): void
+        + status(int): void
+    }
+    
+    WeatherWebView --> HttpContext : uses
+}
+
+package "Controller (Контролер)" {
+    class WeatherController {
+        - serviceNotifier: ServiceNotifier
+        
+        + WeatherController(ServiceNotifier)
+        + getAllSubscribers(): List<Subscriber>
+        + addSubscriber(Subscriber): void
+        + sendNotification(String): boolean
+    }
+}
+
+package "Web Server (Веб-сервер)" {
+    abstract class WebServer {
+        @FunctionalInterface RequestHandler
+        
+        {abstract} + start(int): void
+        {abstract} + stop(): void
+        {abstract} + before(RequestHandler): void
+        {abstract} + options(String, RequestHandler): void
+        {abstract} + get(String, RequestHandler): void
+    }
+    
+    class JavalinWebServer {
+        - app: Javalin
+        
+        + start(int): void
+        + stop(): void
+        + before(RequestHandler): void
+        + options(String, RequestHandler): void
+        + get(String, RequestHandler): void
+    }
+    
+    WebServer <|-- JavalinWebServer : extends
+}
+
+package "Database (База даних)" {
+    interface Connection {
+        + prepareStatement(String): PreparedStatement
+        + close(): void
+    }
+    
+    interface PreparedStatement {
+        + setString(int, String): void
+        + executeUpdate(): int
+        + executeQuery(): ResultSet
+    }
+    
+    class SQLiteConnection {
+        - dbPath: String
+    }
+    
+    Connection <|.. SQLiteConnection : implements
+}
+
+' MVC архітектура зв'язки
+WeatherController --> ServiceNotifier : uses (Model)
+WeatherWebView --> WeatherController : uses (Controller)
+WeatherWebView --> WebServer : uses
+
+' Web Server та Database зв'язки
+WebServer <.. WeatherWebView : used by
+SubscriberService --> Connection : uses
+
+' Notes
+note right of ServiceNotifier
+  **Композиція:**
+  ServiceNotifier містить
+  список Subscriber об'єктів
+end note
+
+note right of WeatherController
+  **MVC Controller:**
+  Проміжна ланка між
+  View та Model
+end note
+
+note right of WeatherWebView
+  **MVC View:**
+  REST API для веб-інтерфейсу
+  GET /api/subscribers
+  GET /api/status
+end note
+
+note bottom of SubscriberService
+  **Залежність:**
+  SubscriberService залежить
+  від SQLite Connection
+end note
+
+@enduml

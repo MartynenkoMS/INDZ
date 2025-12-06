@@ -1,3 +1,5 @@
+package com.weatherservice;
+
 /**
  * Class representing a technician
  */

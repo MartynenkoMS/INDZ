@@ -1,3 +1,5 @@
+package com.weatherservice;
+
 import java.util.Date;
 
 /**

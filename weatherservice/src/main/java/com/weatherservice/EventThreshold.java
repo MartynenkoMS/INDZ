@@ -1,3 +1,5 @@
+package com.weatherservice;
+
 /**
  * Class for representing event threshold
  */

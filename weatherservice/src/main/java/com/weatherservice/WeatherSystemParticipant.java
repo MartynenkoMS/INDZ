@@ -1,3 +1,5 @@
+package com.weatherservice;
+
 /**
  * Abstract class representing a weather system participant
  */

@@ -1,5 +1,10 @@
 @startuml
-title UML-діаграма класів: Метеосервіс
+title UML-діаграма класів
+skinparam classAttributeIconSize 0
+
+' --------------------------------------
+'        ІСНУЮЧІ КЛАСИ
+' --------------------------------------
 
 abstract class УчасникМетеосистеми {
   - id : int
@@ -17,7 +22,8 @@ class Метеоролог {
   + Метеоролог(id:int, name:string, спец:string)
   + публікуватиПрогноз() : void
   + публікуватиПопередження() : void
-  + аналізуватиТочність() : void <<final>>
+  + аналізуватиТочність() : void
+  + сформуватиСповіщення() : string
 }
 
 class Технік {
@@ -25,6 +31,7 @@ class Технік {
   + Технік(id:int, name:string, рівень:string)
   + обслуговуватиСенсори() : void
   + обслуговуватиРадар() : void
+  + сформуватиСповіщення() : string
 }
 
 class Попередження {
@@ -45,19 +52,83 @@ class Регіон {
   + додатиПопередження(п:Попередження) : void
 }
 
-class СервісСповіщень {
-  - адресати : List<string>
-  + СервісСповіщень()
-  + надіслати(текст:string) : bool
+' --------------------------------------
+'     НОВІ КЛАСИ ДЛЯ DI (2.10)
+' --------------------------------------
+
+class Підписник {
+  - імʼя : string
+  + Підписник(імʼя:string)
+  + getName() : string
+  + deliverMessage(text:string) : void
 }
 
+class СервисСповіщень {
+  - адресати : List<string>
+  - підписники : List<Підписник>
+  - subscriberService : SubscriberService     <<injected>>
+  + СервисСповіщень(subscriberService:SubscriberService)
+  + додатиАдресата(addr:string) : void
+  + додатиПідписника(п:Підписник) : void
+  + надіслати(text:string) : bool
+}
+
+' Додаємо setter injection
+СервисСповіщень ..> SubscriberService : <<inject setter>>
+
+class SubscriberService {
+  - connection : Connection                   <<injected>>
+  + SubscriberService(connection:Connection)
+  + saveSubscriber(п:Підписник) : void
+}
+
+' Додаємо setter injection
+SubscriberService ..> Connection : <<inject setter>>
+
+class weatherserviceModule <<Guice Module>> {
+  + configure() : void
+  + provideConnection(url:String) : Connection
+}
+
+interface Connection <<JDBC>> {
+}
+
+class SQLiteDriver <<JDBC Driver>> {
+}
+
+
+' --------------------------------------
+'           ЗВ’ЯЗКИ
+' --------------------------------------
+
+' Наслідування
 УчасникМетеосистеми <|-- Метеоролог
 УчасникМетеосистеми <|-- Технік
 
+' Реалізація інтерфейсу
 Метеоролог ..|> IПланСповіщень
 Технік ..|> IПланСповіщень
 
-Попередження ..> СервісСповіщень
+' Композиції
 Регіон o-- Попередження
 Попередження *-- ПорігПодії
+
+' Композиція: СервісСповіщень володіє Підписниками
+СервисСповіщень *-- Підписник : composition
+
+' DI залежності
+СервисСповіщень ..> SubscriberService : <<inject setter>>
+SubscriberService ..> Connection : <<inject setter>>
+
+' SubscriberService використовує Підписник
+SubscriberService ..> Підписник : uses
+
+' weatherserviceModule надає Connection
+weatherserviceModule ..> Connection : provides
+
+' JDBC driver implements Connection
+SQLiteDriver -|> Connection
+
+' Попередження використовує СервісСповіщень
+Попередження ..> СервисСповіщень
 @enduml
