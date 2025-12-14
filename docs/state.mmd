@@ -1,11 +1,11 @@
 stateDiagram-v2
-    [*] --> Створене : Створити попередження()
+    [*] --> Created : createWarning()
 
-    Створене --> Активне : Підтверджено метеорологом
-    Активне --> Надіслане : send(Сервіс сповіщень)
-    Активне --> Скасоване : cancel()
+    Created --> Active : confirmByMetorologist()
+    Active --> Sent : send(NotificationService)
+    Active --> Canceled : cancel()
 
-    Надіслане --> Архівоване : Подія минула
-    Скасоване --> Архівоване : Зберегти для історії
+    Sent --> Archived : eventEnded()
+    Canceled --> Archived : saveForHistory()
 
-    Архівоване --> [*]
+    Archived --> [*]

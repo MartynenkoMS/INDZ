@@ -1,53 +1,85 @@
 @startuml
 title UML-діаграма класів: Метеосервіс
 
-abstract class УчасникМетеосистеми {
-  - id : int
+abstract class WeatherSystemParticipant {
+  - id : number
   - name : string
-  + УчасникМетеосистеми(id:int, name:string)
+  + WeatherSystemParticipant(id:number, name:string)
+  + getName() : string
+  + getId() : number
+}
+
+interface INotificationPlan {
+  + formNotification() : string
+}
+
+class Meteorologist {
+  - specialization : string
+  + Meteorologist(id:number, name:string, specialization:string)
+  + publishForecast() : void
+  + publishWarning() : void
+  + analyzeAccuracy() : void
+}
+
+class Technician {
+  - level : string
+  + Technician(id:number, name:string, level:string)
+  + maintainSensors() : void
+  + maintainRadar() : void
+}
+
+class Warning {
+  - text : string
+  - time : Date
+  - threshold : EventThreshold
+  + Warning(text:string, time:Date, threshold:EventThreshold)
+  + getDetails() : string
+  + getTime() : Date
+  + getThreshold() : EventThreshold
+}
+
+class EventThreshold {
+  - dangerLevel : number
+  + EventThreshold(level:number)
+  + getLevel() : number
+}
+
+class Region {
+  - name : string
+  - warnings : Warning[]
+  + Region(name:string)
+  + addWarning(warning:Warning) : void
+  + getName() : string
+  + getWarnings() : Warning[]
+}
+
+class Subscriber {
+  - name : string
+  + Subscriber(name:string)
+  + deliverMessage(text:string) : void
   + getName() : string
 }
 
-interface IПланСповіщень {
-  + сформуватиСповіщення() : string
+class NotificationService {
+  - recipients : string[]
+  - subscribers : Subscriber[]
+  + NotificationService()
+  + addRecipient(recipient:string) : void
+  + addSubscriber(subscriber:Subscriber) : void
+  + send(text:string) : boolean
 }
 
-class Метеоролог {
-  - спеціалізація : string
-  + Метеоролог(id:int, name:string, спец:string)
-  + публікуватиПрогноз() : void
-  + публікуватиПопередження() : void
-  + аналізуватиТочність() : void <<final>>
-}
+WeatherSystemParticipant <|-- Meteorologist
+WeatherSystemParticipant <|-- Technician
 
-class Технік {
-  - рівень : string
-  + Технік(id:int, name:string, рівень:string)
-  + обслуговуватиСенсори() : void
-  + обслуговуватиРадар() : void
-}
+Meteorologist ..|> INotificationPlan
+Technician ..|> INotificationPlan
 
-class Попередження {
-  - текст : string
-  - час : Date
-  + Попередження(текст:string, час:Date)
-  + getDetails() : string
-}
-
-class ПорігПодії {
-  - рівеньОпасності : int
-  + ПорігПодії(level:int)
-}
-
-class Регіон {
-  - назва : string
-  + Регіон(назва:string)
-  + додатиПопередження(п:Попередження) : void
-}
-
-class СервісСповіщень {
-  - адресати : List<string>
-  + СервісСповіщень()
+Warning *-- EventThreshold
+Region o-- Warning
+Warning ..> NotificationService
+NotificationService --> Subscriber
+@enduml
   + надіслати(текст:string) : bool
 }
 

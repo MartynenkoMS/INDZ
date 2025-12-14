@@ -1,25 +1,25 @@
 sequenceDiagram
-    actor Метеоролог
-    participant Попередження
-    participant Регіон
-    participant СервісСповіщень
-    participant Підписник
+    actor Meteorologist
+    participant Warning
+    participant Region
+    participant NotificationService
+    participant Subscriber
 
     %% Створення попередження
-    Метеоролог->>Попередження: create(текст, час)
-    Попередження-->>Метеоролог: return Попередження
+    Meteorologist->>Warning: create(text, time)
+    Warning-->>Meteorologist: return Warning
 
-    %% Прив’язка до регіону
-    Метеоролог->>Регіон: addWarning(Попередження)
-    Регіон-->>Метеоролог: confirm
+    %% Прив'язка до регіону
+    Meteorologist->>Region: addWarning(Warning)
+    Region-->>Meteorologist: confirm
 
     %% Відправка повідомлень
     alt Попередження актуальне
-        Попередження->>СервісСповіщень: send(текст)
+        Meteorologist->>NotificationService: send(text)
         loop Для кожного підписника
-            СервісСповіщень->>Підписник: deliverMessage(текст)
-            Підписник-->>СервісСповіщень: ack
+            NotificationService->>Subscriber: deliverMessage(text)
+            Subscriber-->>NotificationService: ack
         end
     else Попередження скасоване
-        Попередження-->>Метеоролог: status = canceled
+        Warning-->>Meteorologist: status = canceled
     end
